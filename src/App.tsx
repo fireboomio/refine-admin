@@ -4,13 +4,13 @@ import { notificationProvider, Layout, ReadyPage, ErrorComponent } from '@pankod
 import '@pankod/refine-antd/dist/styles.min.css'
 // import 'antd/es/style/variable.less'
 import routerProvider from '@pankod/refine-react-router-v6'
-import dataProvider from '@pankod/refine-simple-rest'
 import AntConfigProvider from './providers/AntConfigProvider'
-import { PetList } from './features/pet'
+import { PetCreate, PetList, PetShow } from './features/pet'
 import { LoginPage } from './pages/auth/login'
 
 import CallbackPage from './pages/auth/callback'
 import { useAuth } from './providers/AuthenticationContext'
+import { FireboomDataProvider } from './providers/dataProvider'
 
 function App() {
   const { isAuthenticated, user, isLoading, logout } = useAuth()
@@ -49,7 +49,7 @@ function App() {
             if (user) {
               return Promise.resolve({
                 ...user,
-                avatar: user.avatarUrl
+                avatar: user.avatarUrl,
               })
             }
             return Promise.reject()
@@ -64,8 +64,8 @@ function App() {
             },
           ],
         }}
-        dataProvider={dataProvider('https://api.fake-rest.refine.dev')}
-        resources={[{ name: 'pets', list: PetList }]}
+        dataProvider={FireboomDataProvider()}
+        resources={[{ name: 'Pet', list: PetList, show: PetShow, create: PetCreate }]}
       />
     </AntConfigProvider>
   )

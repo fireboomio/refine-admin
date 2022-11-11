@@ -1,16 +1,24 @@
-import { List, Table, useTable, NumberField } from '@pankod/refine-antd'
+import { List, Table, useTable, NumberField, ShowButton } from '@pankod/refine-antd'
 
 import { IPet } from './interfaces'
 
 export const PetList: React.FC = () => {
   const { tableProps } = useTable<IPet>()
   return (
-    <List>
+    <List createButtonProps={{ type: 'primary' }}>
+      {/* <CreateButton  /> */}
       <Table {...tableProps} rowKey="id">
         <Table.Column dataIndex="name" title="名称" />
-        <Table.Column dataIndex="category" title="分类" render={(v) => v.name} />
+        {/* <Table.Column dataIndex="category" title="分类" render={(v) => v.name} /> */}
         <Table.Column dataIndex="age" title="年龄" render={(value) => <NumberField value={value} />} />
-        <Table.Column dataIndex="sex" title="性别" render={(value) => (value === 'female' ? '女' : '男')} />
+        <Table.Column dataIndex="sex" title="性别" render={(value) => (value === 2 ? '女' : '男')} />
+        <Table.Column<IPet>
+          title="Actions"
+          dataIndex="actions"
+          render={(_text, record): React.ReactNode => {
+            return <ShowButton size="small" recordItemId={record.id} hideText />
+          }}
+        />
       </Table>
     </List>
   )
