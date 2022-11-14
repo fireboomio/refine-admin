@@ -30,7 +30,7 @@ export const FireboomDataProvider = (apiUrl: string = '/app/main/operations'): D
       return data ? data.data : []
     },
     async getOne({ id, resource }) {
-      const data = resolveResp(await client.get(`/GetOne${resource}`, { params: { id } }))
+      const data = resolveResp(await client.get(`/GetOne${resource}`, { params: { id: +id } }))
       return data
     },
     async create({ resource, variables, metaData }) {
@@ -38,11 +38,11 @@ export const FireboomDataProvider = (apiUrl: string = '/app/main/operations'): D
       return data
     },
     async update({ id, resource, variables, metaData }) {
-      const data = resolveResp(await client.post(`/UpdateOne${resource}`, { ...variables, id }))
+      const data = resolveResp(await client.post(`/UpdateOne${resource}`, { ...variables, id: +id }))
       return data
     },
     async deleteOne({ id, resource, variables }) {
-      const data = resolveResp(await client.post(`/DeleteOne${resource}`, { ...variables, id }))
+      const data = resolveResp(await client.post(`/DeleteOne${resource}`, { ...variables, id: +id }))
       return data
     },
     getApiUrl() {

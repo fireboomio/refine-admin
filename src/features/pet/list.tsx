@@ -1,4 +1,4 @@
-import { List, Table, useTable, NumberField, ShowButton } from '@pankod/refine-antd'
+import { List, Table, useTable, NumberField, ShowButton, Space, DeleteButton, EditButton } from '@pankod/refine-antd'
 
 import { IPet } from './interfaces'
 
@@ -16,7 +16,13 @@ export const PetList: React.FC = () => {
           title="Actions"
           dataIndex="actions"
           render={(_text, record): React.ReactNode => {
-            return <ShowButton size="small" recordItemId={record.id} hideText />
+            return (
+              <Space>
+                <ShowButton size="small" recordItemId={record.id} hideText />
+                <EditButton size="small" recordItemId={record.id} hideText />
+                <DeleteButton size="small" recordItemId={record.id} hideText />
+              </Space>
+            )
           }}
         />
       </Table>

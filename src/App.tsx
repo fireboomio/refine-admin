@@ -5,7 +5,7 @@ import '@pankod/refine-antd/dist/styles.min.css'
 // import 'antd/es/style/variable.less'
 import routerProvider from '@pankod/refine-react-router-v6'
 import AntConfigProvider from './providers/AntConfigProvider'
-import { PetCreate, PetList, PetShow } from './features/pet'
+import { PetCreate, PetList, PetShow, PostEdit } from './features/pet'
 import { LoginPage } from './pages/auth/login'
 
 import CallbackPage from './pages/auth/callback'
@@ -65,7 +65,7 @@ function App() {
           ],
         }}
         dataProvider={FireboomDataProvider()}
-        resources={[{ name: 'Pet', list: PetList, show: PetShow, create: PetCreate }]}
+        resources={[{ name: 'Pet', list: PetList, show: PetShow, create: PetCreate, edit: PostEdit }]}
       />
     </AntConfigProvider>
   )
