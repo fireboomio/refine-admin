@@ -20,3 +20,10 @@ export type IPet = {
   // }
   // tags:         ITag[]
 }
+
+export type IPetFilterVariables = {
+  name?: string
+  age?: number
+  sex?: number
+  createdAt?: string
+}

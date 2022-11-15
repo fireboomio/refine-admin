@@ -6,9 +6,9 @@ import '@pankod/refine-antd/dist/styles.min.css'
 import routerProvider from '@pankod/refine-react-router-v6'
 import AntConfigProvider from './providers/AntConfigProvider'
 import { PetCreate, PetList, PetShow, PostEdit } from './features/pet'
-import { LoginPage } from './pages/auth/login'
+import { LoginPage } from './features/auth/login'
 
-import CallbackPage from './pages/auth/callback'
+import CallbackPage from './features/auth/callback'
 import { useAuth } from './providers/AuthenticationContext'
 import { FireboomDataProvider } from './providers/dataProvider'
 

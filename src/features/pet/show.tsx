@@ -1,5 +1,5 @@
 import { useShow } from '@pankod/refine-core'
-import { Show, Typography } from '@pankod/refine-antd'
+import { RefreshButton, Show, Typography } from '@pankod/refine-antd'
 import { IPet } from './interfaces'
 
 const { Title, Text } = Typography
@@ -10,7 +10,7 @@ export const PetShow = () => {
   const record = data?.data as IPet
 
   return (
-    <Show isLoading={isLoading}>
+    <Show isLoading={isLoading} pageHeaderProps={{ extra: <RefreshButton /> }}>
       <Title level={5}>名称</Title>
       <Text>{record?.name}</Text>
 

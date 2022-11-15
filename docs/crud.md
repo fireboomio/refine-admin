@@ -3,15 +3,20 @@
 - 分页查询
 
 ```graphql
-query GetPetList($take: Int = 10, $skip: Int = 0) {
-  data: local_findManyPet(skip: $skip, take: $take) {
+query GetPetList($take: Int = 10, $skip: Int = 0, $orderBy: [local_PetOrderByWithRelationInput], $query: local_PetWhereInput) {
+  data: local_findManyPet(
+    skip: $skip
+    take: $take
+    where: {AND: $query}
+    orderBy: $orderBy
+  ) {
     id
     name
     age
     createdAt
     sex
   }
-  total: local_aggregatePet @transform(get: "_count.id") {
+  total: local_aggregatePet(where: {AND: $query}) @transform(get: "_count.id") {
     _count {
       id
     }
@@ -23,7 +28,7 @@ query GetPetList($take: Int = 10, $skip: Int = 0) {
 
 ```graphql
 query GetManyPet() {
-  data: local_findManyPet() {
+  data: local_findManyPet {
     id
     name
     age
@@ -31,6 +36,7 @@ query GetManyPet() {
     sex
   }
 }
+```
 
 - 查询单个
 
