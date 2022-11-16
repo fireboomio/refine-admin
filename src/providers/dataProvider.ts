@@ -103,13 +103,15 @@ export const FireboomDataProvider = (apiUrl: string = '/app/main/operations'): D
   })
 
   client.interceptors.response.use((resp) => {
-    let message
+    let _message
     if (resp.data) {
-      message = resp.data.message
+      _message = resp.data.message
     } else {
-      message = resp.statusText
+      _message = resp.statusText
     }
-    message.error(message)
+    if (_message) {
+      message.error(_message)
+    }
     return resp
   })
 

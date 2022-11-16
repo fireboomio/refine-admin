@@ -60,7 +60,7 @@ export const PetList = () => {
           <Table.Column dataIndex="age" title="年龄" sorter render={(value) => <NumberField value={value} />} />
           <Table.Column dataIndex="sex" title="性别" sorter render={(value) => (value === 2 ? '女' : '男')} />
           <Table.Column<IPet>
-            title="Actions"
+            title="操作"
             dataIndex="actions"
             render={(_text, record): React.ReactNode => {
               return (

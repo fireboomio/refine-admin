@@ -11,6 +11,7 @@ import { LoginPage } from './features/auth/login'
 import CallbackPage from './features/auth/callback'
 import { useAuth } from './providers/AuthenticationContext'
 import { FireboomDataProvider } from './providers/dataProvider'
+import { UserList, UserShow } from './features/identity/user'
 
 function App() {
   const { isAuthenticated, user, isLoading, logout } = useAuth()
@@ -65,7 +66,10 @@ function App() {
           ],
         }}
         dataProvider={FireboomDataProvider()}
-        resources={[{ name: 'Pet', list: PetList, show: PetShow, create: PetCreate, edit: PostEdit }]}
+        resources={[
+          { name: 'Pet', list: PetList, show: PetShow, create: PetCreate, edit: PostEdit },
+          { name: 'User', list: UserList, show: UserShow }
+        ]}
       />
     </AntConfigProvider>
   )

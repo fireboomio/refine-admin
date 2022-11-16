@@ -3,7 +3,7 @@
 - 分页查询
 
 ```graphql
-query GetPetList($take: Int = 10, $skip: Int = 0, $orderBy: [local_PetOrderByWithRelationInput], $query: local_PetWhereInput) {
+query GetPetList($take: Int = 10, $skip: Int = 0, $orderBy: [local_PetOrderByWithRelationInput] = [{ createdAt: desc }], $query: local_PetWhereInput) {
   data: local_findManyPet(
     skip: $skip
     take: $take
@@ -27,7 +27,7 @@ query GetPetList($take: Int = 10, $skip: Int = 0, $orderBy: [local_PetOrderByWit
 - 查询所有
 
 ```graphql
-query GetManyPet() {
+query GetManyPet {
   data: local_findManyPet {
     id
     name
