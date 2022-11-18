@@ -1,5 +1,17 @@
 # 一个示例的 crud 的 Grahpql 语句
 
+测试模型
+
+```prisma
+model Pet {
+  id        Int      @id @default(autoincrement())
+  name      String
+  age       Int
+  sex       Int
+  createdAt DateTime @default(now())
+}
+```
+
 - 分页查询
 
 ```graphql

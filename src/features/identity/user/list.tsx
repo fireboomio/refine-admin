@@ -25,7 +25,7 @@ export const UserList = () => {
         <Table {...tableProps} rowKey="id">
           <Table.Column dataIndex="avatarUrl" title="头像" render={(value) => <Avatar src={value} size="small" />} />
           <Table.Column dataIndex="name" title="名称" sorter />
-          <Table.Column dataIndex="provider" title="提供商" sorter />
+          <Table.Column<IUser> dataIndex="provider" title="提供商" render={(v, rec) => `${v}.${rec.providerId}`} />
           <Table.Column<IUser>
             title="操作"
             dataIndex="actions"

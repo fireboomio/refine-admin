@@ -3,6 +3,7 @@ export type IUser = {
   createdAt: string
   name: string
   provider: string
+  providerId: string
   avatarUrl?: string
 }
 

@@ -12,6 +12,10 @@ export default defineConfig({
         target: 'http://localhost:9991',
         changeOrigin: true
       },
+      '^/api': {
+        target: 'http://localhost:9123',
+        changeOrigin: true
+      },
       '^/oauth2': {
         target: 'http://localhost:3846',
         changeOrigin: true

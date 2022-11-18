@@ -4,47 +4,35 @@
 
 ```prisma
 model User {
-    id        Int @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    providerUserId   String
-    name String
-    avatarUrl String?
-    provider String
-    providerId String
+  id        Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  providerUserId   String
+  name String
+  avatarUrl String?
+  provider String
+  providerId String
+  Role Role[]
 }
 
-model UserOnRole {
-    userId Int
-    roleId Int
-
-    @@id([userId, roleId])
+model Role {
+  id        Int @id @default(autoincrement())
+  code String
+  desc String?
+  User User[]
+  Menu Menu[]
 }
 
 model Menu {
-    id Int @id @default(autoincrement())
-    parentId Int?
-    label String
-    path String
-    sort Int @default(0)
-    level Int @default(1)
-    Menu            Menu?  @relation("MenuToMenu_parentId", fields: [parentId], references: [id])
-    other_Menu          Menu[] @relation("MenuToMenu_parentId")
-    roles MenuOnRole[]
-}
-
-model MenuOnRole {
-    menuId Int
-    menu Menu @relation(fields: [menuId], references: [id])
-    roleId Int
-
-    @@id([menuId, roleId])
-}
-
-model MenuOnAPI {
-    menuId Int
-    apiPath Int
-
-    @@id([menuId, apiPath])
+  id Int @id @default(autoincrement())
+  parentId Int?
+  label String
+  path String
+  icon String?
+  sort Int @default(0)
+  level Int @default(1)
+  Menu            Menu?  @relation("MenuToMenu_parentId", fields: [parentId], references: [id])
+  other_Menu          Menu[] @relation("MenuToMenu_parentId")
+  Role Role[]
 }
 ```
 
@@ -65,6 +53,8 @@ query GetUserList(
     createdAt
     avatarUrl
     provider
+    providerId
+    providerUserId
   }
   total: local_aggregateUser(where: { AND: $query }) @transform(get: "_count.id") {
     _count {
@@ -75,12 +65,18 @@ query GetUserList(
 ```
 
 2. 查询所有角色
-   调用 fireboom api
+query GetRoleList {
+  data: local_findManyRole {
+    id
+    code
+    desc
+  }
+}
 
 3. 查询所有菜单
 
 ```graphql
-query GetAllMenus {
+query GetMenuList {
   data: local_findManyMenu {
     id
     label
@@ -92,39 +88,39 @@ query GetAllMenus {
 ```
 
 4. 查询所有 API
-   调 fireboom api
+  调 fireboom api
 
 5. 查用户的角色列表
-  1. 查用户ids
 
-  ```grahpql
-  query GetUserRoleIds($userId: Int!) {
-    data: local_findManyUserOnRole(where: {userId: {equals: $userId}}) {
-      userId
-      roleId
+```grahpql
+query GetUserRoles($userId: Int!) {
+  local_findFirstUser(where: {id: {equals: $userId}}) {
+    Role {
+      code
+      desc
+      id
     }
   }
-  ```
-
-  2. 调用 fireboom api，传 roleIds
+}
+```
 
 6. 用户关联角色
-  1. 删除用户所有角色
+  1. 删除用户所有角色，目前只能先查然后通过循环调用
 
   ```graphql
-  mutation DeleteUserRoles($userId: Int!) {
-    data: local_deleteManyUserOnRole(where: { userId: { equals: $userId } }) {
-      count
+  mutation DeleteUserRoles($userId: Int!, $roleId: Int!) {
+    local_updateOneUser(where: {id: $userId}, data: {Role: {disconnect: {id: $roleId}}}) {
+      id
     }
   }
   ```
 
-  2. 批量添加用户的角色
+  2. 批量添加用户的角色，目前只能循环调用
 
   ```graphql
-  mutation CreateUserRoles($data: [local_UserOnRoleCreateManyInput]!) {
-    data: local_createManyUserOnRole(data: $data) {
-      count
+  mutation CreateUserRoles($userId: Int!, $create: local_RoleCreateWithoutUserInput) {
+    local_updateOneUser(data: {Role: {create: $create}}, where: {id: $userId}) {
+      id
     }
   }
   ```
@@ -133,25 +129,26 @@ query GetAllMenus {
 
 ```graphql
 query GetRoleMenus($roleId: Int!) {
-  local_findManyMenuOnRole(where: {roleId: {equals: $roleId}}) {
-    menu: Menu {
+  local_findFirstRole(where: {id: {equals: $roleId}}) {
+    Menu {
       sort
       path
       parentId
       level
       label
       id
+      icon
     }
   }
 }
 ```
 
 8. 给角色关联菜单
-  1. 删除角色的所有菜单
+  1. 删除角色的所有菜单，目前只能循环删除
   ```graphql
-  mutation DeleteRoleMenus($roleId: Int!) {
-    data: local_deleteManyMenuOnRole(where: { roleId: { equals: $roleId } }) {
-      count
+  mutation DeleteRoleMenus($roleId: Int!, $menuId: Int!) {
+    local_updateOneRole(where: {id: $roleId}, data: {Menu: {disconnect: {id: $menuId}}}) {
+      id
     }
   }
 
@@ -159,9 +156,9 @@ query GetRoleMenus($roleId: Int!) {
   2. 批量添加角色的菜单
 
   ```graphql
-  mutation CreateRoleMenus($data: [local_MenuOnRoleCreateManyInput]!) {
-    data: local_createManyMenuOnRole(data: $data) {
-      count
+  mutation CreateRoleMenus($roleId: Int!, $create: local_MenuCreateWithoutRoleInput) {
+    local_updateOneRole(data: {Menu: {create: $create}}, where: {id: $roleId}) {
+      id
     }
   }
   ```
@@ -171,3 +168,49 @@ query GetRoleMenus($roleId: Int!) {
 
 10. 角色关联多个API
   调 fireboom api
+
+11. 同步用户
+  1. 查询用户是否存在
+
+  ```graphql
+  query GetOneUser($provider: String!, $providerId: String!, $providerUserId: String!) {
+    data: local_findFirstUser(
+      where: { AND: { provider: {equals: $provider}, providerId: {equals: $providerId}, providerUserId: {equals: $providerUserId}}}
+    ) {
+      name
+      id
+    }
+  }
+  ```
+
+  2. 如果用户不存在，则插入用户
+
+  ```graphql
+  mutation CreateOneUser($data: local_UserCreateInput!) {
+    local_createOneUser(data: $data) {
+      id
+    }
+  }
+  ```
+
+  3. 如果用户存在，则获取用户角色、菜单
+
+  ```graphql
+  query GetUserRoleMenu($userId: Int!, $roleId: Int! @internal) {
+    data: local_findFirstUserOnRole(where: {userId: {equals: $userId}}) {
+      roleId @export(as: "roleId")
+      menus: _join @transform(get: "local_findManyMenuOnRole.data") {
+        local_findManyMenuOnRole(where: {roleId: {equals: $roleId}}) {
+          data: Menu {
+            id
+            label
+            level
+            parentId
+            path
+            sort
+          }
+        }
+      }
+    }
+  }
+  ```

@@ -1,7 +1,6 @@
-import { CrudOperators, DataProvider, LogicalFilter } from "@pankod/refine-core";
+import { CrudOperators, DataProvider, HttpError, LogicalFilter } from "@pankod/refine-core";
 import { message } from "antd";
 import axios, { AxiosError, AxiosResponse } from "axios";
-
 
 // function resolvePath(...pathList: string[]) {
 //   return pathList.map<string>((item, index) => {
@@ -15,7 +14,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 async function resolveResp(respPromise: Promise<AxiosResponse<any, any>>) {
   let msg
   try {
-    const resp = await respPromise 
+    const resp = await respPromise
     if (resp.status < 300 && resp.status >= 200) {
       return resp.data.data
     }
@@ -24,7 +23,7 @@ async function resolveResp(respPromise: Promise<AxiosResponse<any, any>>) {
     } else {
       msg = resp.statusText
     }
-  } catch(e) {
+  } catch (e) {
     const err = e as AxiosError
     msg = err.message
   }
@@ -89,7 +88,7 @@ function parseOperatorToGraphQuery(operator: LogicalFilter) {
   }
 }
 
-export const FireboomDataProvider = (apiUrl: string = '/app/main/operations'): DataProvider => {
+export const OperationDataProvider = (apiUrl: string = '/app/main/operations'): DataProvider => {
   const client = axios.create({
     baseURL: apiUrl, paramsSerializer: {
       serialize(params) {
@@ -158,5 +157,63 @@ export const FireboomDataProvider = (apiUrl: string = '/app/main/operations'): D
     getApiUrl() {
       return client.getUri()
     }
+  }
+}
+
+export const FireboomDataProvider = (apiUrl: string = '/api/v1'): DataProvider => {
+  const client = axios.create({
+    baseURL: apiUrl
+  })
+
+  client.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (error) => {
+      const customError: HttpError = {
+        ...error,
+        message: error.response?.data?.message,
+        statusCode: error.response?.status,
+      };
+
+      return Promise.reject(customError);
+    },
+  );
+
+  return {
+    async getList({ resource, hasPagination, pagination, metaData, sort, filters }) {
+      return { data: [], total: 0 }
+    },
+    async getMany({ resource, metaData, ids }) {
+      return { data: [] }
+    },
+    // @ts-ignore
+    async getOne({ id, resource }) {
+      return { data: {} }
+    },
+    // @ts-ignore
+    async create({ resource, variables, metaData }) {
+      return { data: {} }
+    },
+    // @ts-ignore
+    async update({ id, resource, variables, metaData }) {
+      return {}
+    },
+    // @ts-ignore
+    async deleteOne({ id, resource, variables }) {
+      return {}
+    },
+    getApiUrl() {
+      return client.getUri()
+    },
+    custom({ method, url, query, headers, payload }) {
+      return resolveResp(client({
+        method,
+        url,
+        headers,
+        params: query,
+        data: payload
+      }))
+    },
   }
 }
