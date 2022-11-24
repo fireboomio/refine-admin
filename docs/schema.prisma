@@ -21,7 +21,7 @@ model Menu {
   id Int @id @default(autoincrement())
   parentId Int?
   label String
-  path String
+  name String
   icon String?
   sort Int @default(0)
   level Int @default(1)

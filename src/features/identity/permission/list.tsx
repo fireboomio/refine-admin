@@ -10,7 +10,11 @@ import {
 import { IApi } from './interfaces'
 
 export const ApiList = () => {
-  const { tableProps } = useTable<IApi>()
+  const { tableProps  } = useTable<IApi>({
+    dataProviderName: 'proxy',
+    resource: 'operateApi',
+    hasPagination: false
+  })
   return (
       <List title="API列表">
         <Table {...tableProps} rowKey="id">
@@ -21,7 +25,7 @@ export const ApiList = () => {
           <Table.Column dataIndex="legal" title="校验" render={v => v ? <Icons.CheckCircleFilled /> : <><Icons.WarningFilled />错误</>} />
           <Table.Column dataIndex="operationType" title="类型" />
           <Table.Column dataIndex="liveQuery" title="实时" render={v => v ? '是' : '否'} />
-          <Table.Column<IApi>
+          {/* <Table.Column<IApi>
             title="操作"
             dataIndex="actions"
             render={(_text, record): React.ReactNode => {
@@ -31,7 +35,7 @@ export const ApiList = () => {
                 </Space>
               )
             }}
-          />
+          /> */}
         </Table>
       </List>
   )

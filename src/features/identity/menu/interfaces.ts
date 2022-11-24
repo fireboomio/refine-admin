@@ -2,11 +2,11 @@ import { type IRole } from "../role/interfaces"
 
 export type IMenu = {
   id: number
-  parentId?: number
+  parentId: number | null
   label: string
   path: string
-  sort: number
-  level: number
+  sort?: number
+  level?: number
 }
 
 export type IMenuWithChildren = IMenu & {
@@ -18,4 +18,3 @@ export type IMenuWithRelation = IMenu & {
   other_Menu?: IMenu[]
   Role?: IRole[]
 }
-

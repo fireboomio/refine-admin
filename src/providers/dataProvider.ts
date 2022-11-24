@@ -11,12 +11,12 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 //   }).join('/')
 // }
 
-async function resolveResp(respPromise: Promise<AxiosResponse<any, any>>) {
+async function resolveResp(respPromise: Promise<AxiosResponse<any, any>>, dataField = 'data') {
   let msg
   try {
     const resp = await respPromise
     if (resp.status < 300 && resp.status >= 200) {
-      return resp.data.data
+      return resp.data[dataField]
     }
     if (resp.data) {
       msg = resp.data.message ?? resp.data
@@ -132,7 +132,7 @@ export const OperationDataProvider = (apiUrl: string = '/app/main/operations'): 
         }, {})
       }
       const data = await resolveResp(client.get(`/Get${resource}List`, { params }))
-      return data ? data : { total: 0, data: data.data }
+      return data ? data : { total: 0, data: [] }
     },
     async getMany({ resource, metaData, ids }) {
       const data = await resolveResp(client.get(`/GetMany${resource}`, { params: { ids } }))
@@ -152,6 +152,16 @@ export const OperationDataProvider = (apiUrl: string = '/app/main/operations'): 
     },
     async deleteOne({ id, resource, variables }) {
       const data = await resolveResp(client.post(`/DeleteOne${resource}`, { ...variables, id: +id }))
+      return data
+    },
+    async custom({ url, method, query, headers, payload}) {
+      const data = await resolveResp(client({
+        url,
+        method,
+        headers,
+        params: query,
+        data: payload
+      }))
       return data
     },
     getApiUrl() {
@@ -182,7 +192,8 @@ export const FireboomDataProvider = (apiUrl: string = '/api/v1'): DataProvider =
 
   return {
     async getList({ resource, hasPagination, pagination, metaData, sort, filters }) {
-      return { data: [], total: 0 }
+      const data = await resolveResp(client.get(resource), 'result')
+      return data ? { data: data, total: data.length } : { total: 0, data: [] }
     },
     async getMany({ resource, metaData, ids }) {
       return { data: [] }

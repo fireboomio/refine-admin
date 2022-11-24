@@ -1,4 +1,4 @@
-export type FlatArrayItem = { id: string | number, parentId?: string | number, [key: string]: any }
+export type FlatArrayItem = { id: string | number, parentId?: string | number | null, [key: string]: any }
 
 export function arrayToTree(items: FlatArrayItem[], id:string|number|null = null, link = 'parentId'): (FlatArrayItem & { children: FlatArrayItem[] | null})[] {
   return items
