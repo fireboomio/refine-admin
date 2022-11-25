@@ -9,6 +9,8 @@
 
 This [refine](https://github.com/pankod/refine) project was generated with [superplate](https://github.com/pankod/refine).
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/fireboomio/refine-admin)
+
 ## Getting Started
 
 **refine** is a React-based framework for building data-intensive applications in no time ✨
@@ -42,7 +44,6 @@ To learn more about **refine**, please check out the [Documentation](https://ref
 - **Ant Design** [Docs](https://refine.dev/docs/ui-frameworks/antd/tutorial/)
 - **React Router** [Docs](https://refine.dev/docs/core/providers/router-provider/)
 - **REST Data Provider** [Docs](https://refine.dev/docs/core/providers/data-provider/#overview)
-
 
 ## License
 
