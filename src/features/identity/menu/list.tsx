@@ -2,7 +2,6 @@ import { List, Table, useTable, Space, useDrawerForm, Drawer, EditButton, Delete
 import { arrayToTree } from '@/utils/array'
 
 import { IMenu, IMenuWithChildren } from './interfaces'
-import { mockMenus } from '../mock'
 import { MenuCreate } from './create'
 
 export const MenuList = () => {
@@ -17,8 +16,6 @@ export const MenuList = () => {
   const { show: showEdit, drawerProps: editDrawerProps } = useDrawerForm<IMenu>({
     action: "edit",
   });
-
-  dataSource = mockMenus
 
   const treeData = arrayToTree([...(dataSource ?? [])], null) as IMenuWithChildren[]
 

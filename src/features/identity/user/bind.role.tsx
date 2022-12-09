@@ -2,7 +2,6 @@ import { useCustom, useCustomMutation, useList } from '@pankod/refine-core'
 import { Button, message, Space, Table } from '@pankod/refine-antd'
 import { useMemo, useState } from 'react'
 import { IRole } from '../role/interfaces'
-import { mockRoles } from '../mock'
 
 interface UserRoleBindProps {
   userId: number | string
@@ -10,21 +9,23 @@ interface UserRoleBindProps {
 }
 
 const UserRoleBind = ({ userId, onClose }: UserRoleBindProps) => {
-  // const { data, isLoading } = useList({ resource: 'Role', config: { hasPagination: false } })
+  const { data, isLoading } = useList({ resource: 'Role', config: { hasPagination: false } })
 
-  // const { data: userRole } = useCustom({
-  //   url: 'GetUserRoles',
-  //   method: 'get',
-  //   config: { query: { userId }}
-  // })
+  const { data: userRoles } = useCustom({
+    url: 'GetUserRoles',
+    method: 'get',
+    config: { query: { userId }}
+  })
 
   const { mutate } = useCustomMutation()
 
-  const [selections, setSelections] = useState<React.Key[]>([1])
+  console.log(userRoles)
 
-  // const roles = useMemo(() => {
-  //   return data?.data ?? []
-  // }, [data])
+  const [selections, setSelections] = useState<React.Key[]>([])
+
+  const roles = useMemo(() => {
+    return data?.data ?? []
+  }, [data])
 
   const onSave = () => {
     mutate({
@@ -47,9 +48,8 @@ const UserRoleBind = ({ userId, onClose }: UserRoleBindProps) => {
   return (
     <>
       <Table
-        // loading={isLoading}
-        // dataSource={roles}
-        dataSource={mockRoles}
+        loading={isLoading}
+        dataSource={roles}
         rowKey="id"
         rowSelection={{
           selectedRowKeys: selections,

@@ -56,8 +56,10 @@ export function AuthenticationProvider({ children }: { children?: ReactNode }) {
     const _roles: IRoleWithApi[] = await new Promise(resolve => {
       setTimeout(() => resolve(mockMyRoles), 500)
     })
+    // TODO
     const _menus: IMenu[] = mockMyMenus
     setRoles(_roles)
+    // TODO
     setApis(_roles.reduce<IApi[]>((arr, item) => {
       // @ts-ignore
       arr.push(...item.apis)

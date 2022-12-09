@@ -2,7 +2,6 @@ import {
   List,
   Table,
   useTable,
-  ShowButton,
   Space,
   Card,
   Avatar,
@@ -15,7 +14,6 @@ import { IUser, IUserFilterVariables } from './interfaces'
 import { Filter, onSearch } from './filter'
 import { useCallback, useState } from 'react'
 import UserRoleBind from './bind.role'
-import { mockUsers } from '../mock'
 
 export const UserList = () => {
   const { tableProps, searchFormProps } = useTable<IUser, HttpError, IUserFilterVariables>({
@@ -34,7 +32,7 @@ export const UserList = () => {
         <Filter formProps={searchFormProps} />
       </Card>
       <List title="用户列表">
-        <Table {...tableProps} dataSource={mockUsers} rowKey="id">
+        <Table {...tableProps} rowKey="id">
           <Table.Column dataIndex="avatarUrl" title="头像" render={(value) => <Avatar src={value} size="small" />} />
           <Table.Column dataIndex="name" title="名称" sorter />
           <Table.Column<IUser> dataIndex="provider" title="提供商" render={(v, rec) => `${v}.${rec.providerId}`} />

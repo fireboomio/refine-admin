@@ -2,13 +2,11 @@ import {
   List,
   Table,
   useTable,
-  ShowButton,
   Space,
   Button,
   Drawer
 } from '@pankod/refine-antd'
 import { useCallback, useState } from 'react'
-import { mockRoles } from '../mock'
 import RoleApiBind from './bind.api'
 import RoleMenuBind from './bind.menu'
 import RoleUserBind from './bind.user'
@@ -39,7 +37,7 @@ export const RoleList = () => {
   return (
     <>
       <List title="角色列表">
-        <Table {...tableProps} dataSource={mockRoles} pagination={false} rowKey="id">
+        <Table {...tableProps} pagination={false} rowKey="id">
           <Table.Column dataIndex="id" title="ID" />
           <Table.Column dataIndex="code" title="Code" sorter />
           <Table.Column dataIndex="desc" title="备注" />
