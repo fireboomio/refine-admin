@@ -1,7 +1,5 @@
-import { useCustom, useCustomMutation, useList } from '@pankod/refine-core'
-import { Avatar, Button, CreateButton, Drawer, message, Space, Table } from '@pankod/refine-antd'
+import { Avatar, Button, CreateButton, Drawer, message, Space, Table, useTable } from '@pankod/refine-antd'
 import { useMemo, useState } from 'react'
-import { mockUsers } from '../mock'
 import { IUser } from '../user/interfaces'
 
 interface UserSelectionProps {
@@ -11,8 +9,8 @@ interface UserSelectionProps {
 }
 
 const UserSelection = ({ roleId, onClose, onSelect }: UserSelectionProps) => {
-
-  const [users, setUsers] = useState<IUser[]>(mockUsers)
+  
+  const { tableProps } = useTable<IUser, any, any>({ resource: 'User' })
   const [selections, setSelections] = useState<IUser[]>([])
 
   const onSubmit = () => {
@@ -23,8 +21,7 @@ const UserSelection = ({ roleId, onClose, onSelect }: UserSelectionProps) => {
   return (
     <>
       <Table<IUser>
-        // loading={isLoading}
-        dataSource={users}
+        {...tableProps}
         rowKey="id"
         rowSelection={{
           selectedRowKeys: selections.map(i => i.id),

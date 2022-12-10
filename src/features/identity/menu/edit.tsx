@@ -3,11 +3,11 @@ import { IMenu } from './interfaces'
 import { useMenu } from './useMenu'
 
 export const MenuEdit = () => {
-  const { formProps, saveButtonProps } = useDrawerForm<IMenu>({ action: 'edit' })
+  const { id, formProps, saveButtonProps, formLoading, deleteButtonProps } = useDrawerForm<IMenu>({ action: 'edit', warnWhenUnsavedChanges: true, })
   const { treeData } = useMenu()
 
   return (
-    <Edit saveButtonProps={saveButtonProps}>
+    <Edit recordItemId={id} saveButtonProps={{...saveButtonProps, disabled: formLoading }} deleteButtonProps={deleteButtonProps}>
       <Form {...formProps} layout="vertical">
         <Form.Item label="名称" name="label" rules={[{ required: true }]}>
           <Input maxLength={6} placeholder="请输入菜单名称" />

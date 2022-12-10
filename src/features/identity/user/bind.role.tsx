@@ -1,7 +1,6 @@
 import { useCustom, useCustomMutation, useList } from '@pankod/refine-core'
 import { Button, message, Space, Table } from '@pankod/refine-antd'
 import { useEffect, useState } from 'react'
-import { mutateToPromise } from '@/utils/mutate'
 
 interface UserRoleBindProps {
   userId: number | string
@@ -17,7 +16,7 @@ const UserRoleBind = ({ userId, onClose }: UserRoleBindProps) => {
     config: { query: { userId }}
   })
 
-  const { mutate, mutateAsync, isLoading: isSaveLoading } = useCustomMutation()
+  const { mutateAsync, isLoading: isSaveLoading } = useCustomMutation()
 
   const [selections, setSelections] = useState<React.Key[]>([])
 

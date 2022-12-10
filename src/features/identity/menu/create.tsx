@@ -13,7 +13,7 @@ export const MenuCreate = () => {
         <Form.Item label="名称" name="label" rules={[{ required: true }]}>
           <Input maxLength={6} placeholder="请输入菜单名称" />
         </Form.Item>
-        <Form.Item label="路径" name="path" rules={[{ required: true }]}>
+        <Form.Item label="路由名称" name="path" rules={[{ required: true }]}>
           <Input placeholder="请输入菜单路径 eg: Pet" />
         </Form.Item>
         <Form.Item label="父菜单" name="parentId">

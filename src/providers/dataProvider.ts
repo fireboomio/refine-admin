@@ -140,7 +140,7 @@ export const OperationDataProvider = (apiUrl: string = '/app/main/operations'): 
     },
     async getOne({ id, resource }) {
       const data = await resolveResp(client.get(`/GetOne${resource}`, { params: { id: +id } }))
-      return data
+      return data.data
     },
     async create({ resource, variables, metaData }) {
       const data = await resolveResp(client.post(`/CreateOne${resource}`, variables))
