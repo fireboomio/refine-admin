@@ -91,7 +91,7 @@ query GetMenuList {
 
 ```graphql
 mutation CreateOneMenu($label: String!, $level: Int, $sort: Int, $path: String!) {
-  local_my_createOneMenu(
+  data: local_my_createOneMenu(
     data: {label: $label, path: $path, sort: $sort, level: $level, icon: ""}
   ) {
     id
@@ -103,7 +103,7 @@ mutation CreateOneMenu($label: String!, $level: Int, $sort: Int, $path: String!)
 
 ```graphql
 query GetOneMenu($id: Int!) {
-  local_my_findFirstMenu(where: {id: {equals: $id}}) {
+  data: local_my_findFirstMenu(where: {id: {equals: $id}}) {
     icon
     id
     label
@@ -119,7 +119,7 @@ query GetOneMenu($id: Int!) {
 
 ```graphql
 mutation UpdateOneMenu($id: Int!, $sort: Int, $path: String, $level: Int, $label: String, $icon: String) {
-  local_my_updateOneMenu(
+  data: local_my_updateOneMenu(
     data: {sort: {set: $sort}, path: {set: $path}, level: {set: $level}, label: {set: $label}, icon: {set: $icon}}
     where: {id: $id}
   ) {
@@ -132,7 +132,7 @@ mutation UpdateOneMenu($id: Int!, $sort: Int, $path: String, $level: Int, $label
 
 ```graphql
 mutation DeleteOneMenu($id: Int) {
-  local_my_deleteOneMenu(where: {id: $id}) {
+  data: local_my_deleteOneMenu(where: {id: $id}) {
     id
   }
 }
@@ -160,7 +160,7 @@ query GetUserRoles($userId: Int!) {
 
   ```graphql
   mutation DisconnectOneUserRole($userId: Int!, $roleId: Int!) {
-    local_my_updateOneUser(where: {id: $userId}, data: {Role: {disconnect: {id: $roleId}}}) {
+    data: local_my_updateOneUser(where: {id: $userId}, data: {Role: {disconnect: {id: $roleId}}}) {
       id
     }
   }
@@ -170,7 +170,7 @@ query GetUserRoles($userId: Int!) {
 
   ```graphql
   mutation ConnectOneUserRole($userId: Int!, $roleId: Int!) {
-    local_my_updateOneUser(where: {id: $userId}, data: {Role: {connect: {id: $roleId}}}) {
+    data: local_my_updateOneUser(where: {id: $userId}, data: {Role: {connect: {id: $roleId}}}) {
       id
     }
   }
@@ -225,7 +225,7 @@ query GetUsersWithoutRole($roleId: Int!, $take: Int = 10, $skip: Int = 0) {
 
 ```graphql
 query GetRoleMenus($roleId: Int!) {
-  local_my_findFirstRole(where: {id: {equals: $roleId}}) {
+  data: local_my_findFirstRole(where: {id: {equals: $roleId}}) @transform(get: "Menu") {
     Menu {
       sort
       path
@@ -242,8 +242,8 @@ query GetRoleMenus($roleId: Int!) {
 11. 给角色关联菜单
   1. 删除角色的所有菜单，目前只能循环删除
   ```graphql
-  mutation DeleteRoleMenus($roleId: Int!, $menuId: Int!) {
-    local_my_updateOneRole(where: {id: $roleId}, data: {Menu: {disconnect: {id: $menuId}}}) {
+  mutation DisconnectOneRoleMenu($roleId: Int!, $menuId: Int!) {
+    data: local_my_updateOneRole(where: {id: $roleId}, data: {Menu: {disconnect: {id: $menuId}}}) {
       id
     }
   }
@@ -252,8 +252,8 @@ query GetRoleMenus($roleId: Int!) {
   2. 批量添加角色的菜单
 
   ```graphql
-  mutation CreateRoleMenus($roleId: Int!, $create: local_my_MenuCreateWithoutRoleInput) {
-    local_my_updateOneRole(data: {Menu: {create: $create}}, where: {id: $roleId}) {
+  mutation ConnectOneRoleMenu($roleId: Int!, $menuId: Int!) {
+    data: local_my_updateOneRole(data: {Menu: {connect: {id: $menuId}}}, where: {id: $roleId}) {
       id
     }
   }

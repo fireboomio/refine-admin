@@ -1,9 +1,8 @@
-import { useCustomMutation } from '@pankod/refine-core'
+import { useCustom, useCustomMutation, useList } from '@pankod/refine-core'
 import { Button, message, Space, Tree } from '@pankod/refine-antd'
-import { useState } from 'react'
-import { IMenu } from '../menu/interfaces'
-import { mockMenus } from '../mock'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { arrayToTree } from '@/utils/array'
+import { IMenu } from '../menu/interfaces'
 
 interface RoleMenuBindProps {
   roleId: number | string
@@ -11,42 +10,64 @@ interface RoleMenuBindProps {
 }
 
 const RoleMenuBind = ({ roleId, onClose }: RoleMenuBindProps) => {
-  const { mutate } = useCustomMutation()
+  const { data } = useList<IMenu>({ config: { hasPagination: false }, resource: 'Menu'})
+  const { mutateAsync, isLoading } = useCustomMutation()
 
-  const [menus, setMenus] = useState<IMenu[]>(mockMenus)
+  const { data: roleMenus } = useCustom<IMenu[]>({
+    url: 'GetRoleMenus',
+    method: 'get',
+    config: { query: { roleId }}
+  })
   
-  const menusMap = menus.reduce<Record<number, IMenu>>((obj, item) => {
-    obj[item.id] = item
-    return obj
-  }, {})
+  const menusMap = useMemo(() => {
+    return data?.data.reduce<Record<number, IMenu>>((obj, item) => {
+      obj[item.id] = item
+      return obj
+    }, {}) ?? {}
+  }, [data?.data])
   
-  const treeData = arrayToTree(menus)
+  const treeData = useMemo(() => {
+    return arrayToTree(data?.data ?? [])
+  }, [data?.data])
 
-  const [checkedMenus, setCheckedMenus] = useState<number[]>([mockMenus[1].id, mockMenus[2].id])
+  const [checkedMenus, setCheckedMenus] = useState<number[]>([])
 
-  const onSave = () => {
-    console.log(checkedMenus)
-    mutate(
-      {
-        url: '/xxx',
-        method: 'post',
-        values: {
-          roleId,
-          menus: menus.map((item) => item.id),
-        },
-      },
-      {
-        onSuccess(resp) {
-          if (resp) {
-            message.success('关联菜单已更新')
-            onClose?.()
+  useEffect(() => {
+    setCheckedMenus(roleMenus?.data.map(item => item.id) ?? [])
+  }, [roleMenus])
+
+  const onSave = useCallback(async () => {
+    try {
+      await Promise.all(roleMenus!.data.map(menu => {
+        return mutateAsync({
+          url: '/DisconnectOneRoleMenu',
+          method: 'post',
+          values: {
+            menuId: menu.id,
+            roleId
           }
-        },
-      }
-    )
-  }
+        })
+      }))
 
-  const onCheck = ({ checked, halfChecked }: {
+      await Promise.all(checkedMenus.map(sel => {
+        return mutateAsync({
+          url: '/ConnectOneRoleMenu',
+          method: 'post',
+          values: {
+            menuId: sel,
+            roleId
+          }
+        })
+      }))
+      message.success('菜单已更新')
+      onClose?.()
+    } catch (error) {
+      console.error(error)
+      message.error('更新失败')
+    }
+  }, [checkedMenus, mutateAsync, onClose, roleId, roleMenus])
+
+  const onCheck = useCallback(({ checked, halfChecked }: {
     checked: number[];
     halfChecked: number[];
   }) => {
@@ -60,21 +81,22 @@ const RoleMenuBind = ({ roleId, onClose }: RoleMenuBindProps) => {
       }
     }
     setCheckedMenus(checked)
-  }
+  }, [menusMap])
 
   return (
     <>
-      <Tree
+      {data?.data && <Tree
         checkable
         checkStrictly
         treeData={treeData}
         fieldNames={{ key: 'id', title: 'label', children: 'children' }}
         checkedKeys={checkedMenus}
+        defaultExpandAll
         // @ts-ignore
         onCheck={onCheck}
-      />
+      />}
       <Space className="mt-4">
-        <Button type="primary" onClick={onSave}>
+        <Button type="primary" loading={isLoading} onClick={onSave}>
           保存
         </Button>
         <Button onClick={onClose}>取消</Button>

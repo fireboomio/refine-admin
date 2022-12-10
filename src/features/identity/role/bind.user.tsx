@@ -1,7 +1,6 @@
-import { useCustom, useCustomMutation, useList } from '@pankod/refine-core'
+import { useCustom, useCustomMutation } from '@pankod/refine-core'
 import { Avatar, Button, CreateButton, Drawer, message, Space, Table } from '@pankod/refine-antd'
-import { useEffect, useMemo, useState } from 'react'
-import { IRole } from '../role/interfaces'
+import { useEffect, useState } from 'react'
 import { IUser } from '../user/interfaces'
 import UserSelection from './user.selection'
 
@@ -13,7 +12,7 @@ interface RoleUserBindProps {
 const RoleUserBind = ({ roleId, onClose }: RoleUserBindProps) => {
   const [users, setUsers] = useState<IUser[]>([])
 
-  const { data, isLoading } = useCustom({
+  const { data, isLoading } = useCustom<IUser[]>({
     url: 'GetRoleUsers',
     method: 'get',
     config: { query: { roleId }}
