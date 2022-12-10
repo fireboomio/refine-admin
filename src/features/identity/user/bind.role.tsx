@@ -1,7 +1,7 @@
 import { useCustom, useCustomMutation, useList } from '@pankod/refine-core'
 import { Button, message, Space, Table } from '@pankod/refine-antd'
-import { useMemo, useState } from 'react'
-import { IRole } from '../role/interfaces'
+import { useEffect, useState } from 'react'
+import { mutateToPromise } from '@/utils/mutate'
 
 interface UserRoleBindProps {
   userId: number | string
@@ -17,39 +17,50 @@ const UserRoleBind = ({ userId, onClose }: UserRoleBindProps) => {
     config: { query: { userId }}
   })
 
-  const { mutate } = useCustomMutation()
-
-  console.log(userRoles)
+  const { mutate, mutateAsync, isLoading: isSaveLoading } = useCustomMutation()
 
   const [selections, setSelections] = useState<React.Key[]>([])
 
-  const roles = useMemo(() => {
-    return data?.data ?? []
-  }, [data])
+  useEffect(() => {
+    setSelections(userRoles?.data.map(item => item.id))
+  }, [userRoles])
 
-  const onSave = () => {
-    mutate({
-      url: '/xxx',
-      method: 'post',
-      values: {
-        userId,
-        roleIds: selections
-      }
-    }, {
-      onSuccess(resp) {
-        if (resp) {
-          message.success('角色已更新')
-          onClose?.()
-        }
-      }
-    })
+  const onSave = async () => {
+    try {
+      await Promise.all(userRoles?.data.map(role => {
+        return mutateAsync({
+          url: '/DisconnectOneUserRole',
+          method: 'post',
+          values: {
+            userId,
+            roleId: role.id
+          }
+        })
+      }))
+
+      await Promise.all(selections.map(sel => {
+        return mutateAsync({
+          url: '/ConnectOneUserRole',
+          method: 'post',
+          values: {
+            userId,
+            roleId: sel
+          }
+        })
+      }))
+      message.success('角色已更新')
+      onClose?.()
+    } catch (error) {
+      console.error(error)
+      message.error('更新失败')
+    }
   }
 
   return (
     <>
       <Table
         loading={isLoading}
-        dataSource={roles}
+        dataSource={data?.data ?? []}
         rowKey="id"
         rowSelection={{
           selectedRowKeys: selections,
@@ -61,7 +72,7 @@ const UserRoleBind = ({ userId, onClose }: UserRoleBindProps) => {
         <Table.Column dataIndex="desc" title="备注" />
       </Table>
       <Space className="mt-4">
-        <Button type="primary" onClick={onSave}>保存</Button>
+        <Button type="primary" loading={isSaveLoading} onClick={onSave}>保存</Button>
         <Button onClick={onClose}>取消</Button>
       </Space>
     </>

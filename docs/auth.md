@@ -44,10 +44,10 @@ model Menu {
 query GetUserList(
   $take: Int = 10
   $skip: Int = 0
-  $orderBy: [local_UserOrderByWithRelationInput]
-  $query: local_UserWhereInput
+  $orderBy: [local_my_UserOrderByWithRelationInput]
+  $query: local_my_UserWhereInput
 ) {
-  data: local_findManyUser(skip: $skip, take: $take, where: { AND: $query }, orderBy: $orderBy) {
+  data: local_my_findManyUser(skip: $skip, take: $take, where: { AND: $query }, orderBy: $orderBy) {
     id
     name
     createdAt
@@ -56,7 +56,7 @@ query GetUserList(
     providerId
     providerUserId
   }
-  total: local_aggregateUser(where: { AND: $query }) @transform(get: "_count.id") {
+  total: local_my_aggregateUser(where: { AND: $query }) @transform(get: "_count.id") {
     _count {
       id
     }
@@ -66,7 +66,7 @@ query GetUserList(
 
 2. 查询所有角色
 query GetRoleList {
-  data: local_findManyRole {
+  data: local_my_findManyRole {
     id
     code
     desc
@@ -77,7 +77,7 @@ query GetRoleList {
 
 ```graphql
 query GetMenuList {
-  data: local_findManyMenu {
+  data: local_my_findManyMenu {
     id
     label
     path
@@ -94,7 +94,7 @@ query GetMenuList {
 
 ```grahpql
 query GetUserRoles($userId: Int!) {
-  local_findFirstUser(where: {id: {equals: $userId}}) {
+  data: local_my_findFirstUser(where: {id: {equals: $userId}}) @transform(get: "Role") {
     Role {
       code
       desc
@@ -108,8 +108,8 @@ query GetUserRoles($userId: Int!) {
   1. 删除用户所有角色，目前只能先查然后通过循环调用
 
   ```graphql
-  mutation DeleteUserRoles($userId: Int!, $roleId: Int!) {
-    local_updateOneUser(where: {id: $userId}, data: {Role: {disconnect: {id: $roleId}}}) {
+  mutation DisconnectOneUserRole($userId: Int!, $roleId: Int!) {
+    local_my_updateOneUser(where: {id: $userId}, data: {Role: {disconnect: {id: $roleId}}}) {
       id
     }
   }
@@ -118,8 +118,8 @@ query GetUserRoles($userId: Int!) {
   2. 批量添加用户的角色，目前只能循环调用
 
   ```graphql
-  mutation CreateUserRoles($userId: Int!, $create: local_RoleCreateWithoutUserInput) {
-    local_updateOneUser(data: {Role: {create: $create}}, where: {id: $userId}) {
+  mutation ConnectOneUserRole($userId: Int!, $roleId: Int!) {
+    local_my_updateOneUser(where: {id: $userId}, data: {Role: {connect: {id: $roleId}}}) {
       id
     }
   }
@@ -129,7 +129,7 @@ query GetUserRoles($userId: Int!) {
 
 ```graphql
 query GetRoleMenus($roleId: Int!) {
-  local_findFirstRole(where: {id: {equals: $roleId}}) {
+  local_my_findFirstRole(where: {id: {equals: $roleId}}) {
     Menu {
       sort
       path
@@ -147,7 +147,7 @@ query GetRoleMenus($roleId: Int!) {
   1. 删除角色的所有菜单，目前只能循环删除
   ```graphql
   mutation DeleteRoleMenus($roleId: Int!, $menuId: Int!) {
-    local_updateOneRole(where: {id: $roleId}, data: {Menu: {disconnect: {id: $menuId}}}) {
+    local_my_updateOneRole(where: {id: $roleId}, data: {Menu: {disconnect: {id: $menuId}}}) {
       id
     }
   }
@@ -156,8 +156,8 @@ query GetRoleMenus($roleId: Int!) {
   2. 批量添加角色的菜单
 
   ```graphql
-  mutation CreateRoleMenus($roleId: Int!, $create: local_MenuCreateWithoutRoleInput) {
-    local_updateOneRole(data: {Menu: {create: $create}}, where: {id: $roleId}) {
+  mutation CreateRoleMenus($roleId: Int!, $create: local_my_MenuCreateWithoutRoleInput) {
+    local_my_updateOneRole(data: {Menu: {create: $create}}, where: {id: $roleId}) {
       id
     }
   }
@@ -174,7 +174,7 @@ query GetRoleMenus($roleId: Int!) {
 
   ```graphql
   query GetOneUser($provider: String!, $providerId: String!, $providerUserId: String!) {
-    data: local_findFirstUser(
+    data: local_my_findFirstUser(
       where: { AND: { provider: {equals: $provider}, providerId: {equals: $providerId}, providerUserId: {equals: $providerUserId}}}
     ) {
       name
@@ -186,8 +186,8 @@ query GetRoleMenus($roleId: Int!) {
   2. 如果用户不存在，则插入用户
 
   ```graphql
-  mutation CreateOneUser($data: local_UserCreateInput!) {
-    local_createOneUser(data: $data) {
+  mutation CreateOneUser($data: local_my_UserCreateInput!) {
+    local_my_createOneUser(data: $data) {
       id
     }
   }
@@ -197,10 +197,10 @@ query GetRoleMenus($roleId: Int!) {
 
   ```graphql
   query GetUserRoleMenu($userId: Int!, $roleId: Int! @internal) {
-    data: local_findFirstUserOnRole(where: {userId: {equals: $userId}}) {
+    data: local_my_findFirstUserOnRole(where: {userId: {equals: $userId}}) {
       roleId @export(as: "roleId")
-      menus: _join @transform(get: "local_findManyMenuOnRole.data") {
-        local_findManyMenuOnRole(where: {roleId: {equals: $roleId}}) {
+      menus: _join @transform(get: "local_my_findManyMenuOnRole.data") {
+        local_my_findManyMenuOnRole(where: {roleId: {equals: $roleId}}) {
           data: Menu {
             id
             label
