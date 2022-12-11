@@ -115,7 +115,7 @@ query GetOneMenu($id: Int!) {
 }
 ```
 
-5. 修改一个菜单
+6. 修改一个菜单
 
 ```graphql
 mutation UpdateOneMenu($id: Int!, $sort: Int, $path: String, $level: Int, $label: String, $icon: String) {
@@ -128,7 +128,7 @@ mutation UpdateOneMenu($id: Int!, $sort: Int, $path: String, $level: Int, $label
 }
 ```
 
-6. 删除一个菜单
+7. 删除一个菜单
 
 ```graphql
 mutation DeleteOneMenu($id: Int) {
@@ -138,10 +138,10 @@ mutation DeleteOneMenu($id: Int) {
 }
 ```
 
-7. 查询所有 API
+8. 查询所有 API
   调 fireboom api
 
-8. 查用户的角色列表
+9. 查用户的角色列表
 
 ```grahpql
 query GetUserRoles($userId: Int!) {
@@ -155,7 +155,7 @@ query GetUserRoles($userId: Int!) {
 }
 ```
 
-9. 用户关联角色
+10. 用户关联角色
   1. 删除用户所有角色，目前只能先查然后通过循环调用
 
   ```graphql
@@ -176,7 +176,7 @@ query GetUserRoles($userId: Int!) {
   }
   ```
 
-10. 查询角色的用户列表
+11. 查询角色的用户列表
 
 ```graphql
 query GetRoleUsers($roleId: Int!) {
@@ -194,7 +194,7 @@ query GetRoleUsers($roleId: Int!) {
 }
 ```
 
-~~11. 分页查询所有不含某角色的用户列表
+~~12. 分页查询所有不含某角色的用户列表
 
 ```graphql
 query GetUsersWithoutRole($roleId: Int!, $take: Int = 10, $skip: Int = 0) {
@@ -221,7 +221,7 @@ query GetUsersWithoutRole($roleId: Int!, $take: Int = 10, $skip: Int = 0) {
 }
 ```~~
 
-10. 查询角色所拥有的菜单
+12. 查询角色所拥有的菜单
 
 ```graphql
 query GetRoleMenus($roleId: Int!) {
@@ -239,7 +239,7 @@ query GetRoleMenus($roleId: Int!) {
 }
 ```
 
-11. 给角色关联菜单
+13. 给角色关联菜单
   1. 删除角色的所有菜单，目前只能循环删除
   ```graphql
   mutation DisconnectOneRoleMenu($roleId: Int!, $menuId: Int!) {
@@ -259,13 +259,13 @@ query GetRoleMenus($roleId: Int!) {
   }
   ```
 
-12. 角色查API列表
+14. 角色查API列表
   调 fireboom api
 
-13. 角色关联多个API
+15. 角色关联多个API
   调 fireboom api
 
-14. 同步用户
+16. 同步用户
   1. 查询用户是否存在
 
   ```graphql
