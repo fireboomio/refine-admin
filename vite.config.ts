@@ -4,20 +4,26 @@ import { defineConfig } from 'vite'
 // import vitePluginImp from 'vite-plugin-imp'
 import WindiCSS from 'vite-plugin-windicss'
 
+const serverHost= process.env.SERVER_HOST || 'localhost'
+
 export default defineConfig({
   server: {
     port: 4321,
     proxy: {
+      '^/auth': {
+        target: `http://${serverHost}:9991`,
+        changeOrigin: true
+      },
       '^/app': {
-        target: 'http://localhost:9991',
+        target: `http://${serverHost}:9991`,
         changeOrigin: true
       },
       '^/api': {
-        target: 'http://localhost:9123',
+        target: `http://${serverHost}:9123`,
         changeOrigin: true
       },
       '^/oauth2': {
-        target: 'http://localhost:3846',
+        target: `http://${serverHost}:3846`,
         changeOrigin: true
       }
     }

@@ -5,7 +5,6 @@ import '@pankod/refine-antd/dist/styles.min.css'
 // import 'antd/es/style/variable.less'
 import routerProvider from '@pankod/refine-react-router-v6'
 import AntConfigProvider from './providers/AntConfigProvider'
-import { PetCreate, PetList, PetShow, PostEdit } from './features/pet'
 import { LoginPage } from './features/auth/login'
 
 import CallbackPage from './features/auth/callback'
@@ -15,6 +14,7 @@ import { UserList } from './features/identity/user'
 import { RoleList } from './features/identity/role'
 import { MenuList } from './features/identity/menu'
 import { ApiList } from './features/identity/permission'
+import { PetCreate, PetEdit, PetList, PetShow } from './features/pet'
 
 const allResources = {
   User: {
@@ -28,6 +28,12 @@ const allResources = {
   },
   Api: {
     list: ApiList
+  },
+  Pet: {
+    list: PetList,
+    create: PetCreate,
+    edit: PetEdit,
+    show: PetShow
   }
 }
 
@@ -52,11 +58,11 @@ function App() {
     }
     if (menu.parentId) {
       res.parentName = routeMap[menu.parentId]
-      const route = menu.path.replace(/\//g, '')
-      res.options!.route = route
-      const resKey = route
-      Object.assign(res, allResources[resKey as keyof typeof allResources])
     }
+    const route = menu.path.replace(/\//g, '')
+    res.options!.route = route
+    const resKey = route
+    Object.assign(res, allResources[resKey as keyof typeof allResources])
     resources.push(res)
   }
 
@@ -70,34 +76,34 @@ function App() {
         LoginPage={LoginPage}
         ReadyPage={ReadyPage}
         catchAll={<ErrorComponent />}
-        // authProvider={{
-        //   login: () => {
-        //     return Promise.resolve()
-        //   },
-        //   logout: () => {
-        //     return logout()
-        //   },
-        //   checkAuth: () => {
-        //     return isAuthenticated ? Promise.resolve() : Promise.reject()
-        //   },
-        //   checkError: (error) => {
-        //     console.log('checkError', error)
-        //     if (error.status === 401) {
-        //       return Promise.reject('/login')
-        //     }
-        //     return Promise.resolve()
-        //   },
-        //   getPermissions: () => Promise.resolve(),
-        //   getUserIdentity() {
-        //     if (user) {
-        //       return Promise.resolve({
-        //         ...user,
-        //         avatar: user.avatarUrl,
-        //       })
-        //     }
-        //     return Promise.reject()
-        //   },
-        // }}
+        authProvider={{
+          login: () => {
+            return Promise.resolve()
+          },
+          logout: () => {
+            return logout()
+          },
+          checkAuth: () => {
+            return isAuthenticated ? Promise.resolve() : Promise.reject()
+          },
+          checkError: (error) => {
+            console.log('checkError', error)
+            if (error.status === 401) {
+              return Promise.reject('/login')
+            }
+            return Promise.resolve()
+          },
+          getPermissions: () => Promise.resolve(),
+          getUserIdentity() {
+            if (user) {
+              return Promise.resolve({
+                ...user,
+                avatar: user.avatarUrl,
+              })
+            }
+            return Promise.reject()
+          },
+        }}
         routerProvider={{
           ...routerProvider,
           routes: [
@@ -111,14 +117,6 @@ function App() {
           default: OperationDataProvider(),
           proxy: FireboomDataProvider()
         }}
-        // resources={[
-        //   { name: 'manage', options: { label: '系统管理' } },
-        //   { name: 'pet', list: PetList, show: PetShow, create: PetCreate, edit: PostEdit },
-        //   { name: 'user', parentName: 'manage', options: { label: '用户管理', route: 'user' },  list: UserList, show: UserShow },
-        //   { name: 'role', parentName: 'manage', options: { label: '角色管理', route: 'role' }, list: RoleList, show: RoleShow },
-        //   { name: 'menu', parentName: 'manage', options: { label: '菜单管理', route: 'menu' }, list: MenuList, show: MenuShow },
-        //   { name: 'api', parentName: 'manage', options: { label: '权限管理', route: 'api' }, list: ApiList, show: ApiShow },
-        // ]}
         resources={resources}
       />
     </AntConfigProvider>

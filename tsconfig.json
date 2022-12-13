@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": "./",
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -15,11 +17,10 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "src",
     "types": ["vite/client"],
     "paths": {
       "@/*": ["src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["./src", "./vite.config.ts"]
 }

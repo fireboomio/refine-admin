@@ -1,7 +1,8 @@
+import SingleFileUpload from '@/components/SingleFileUpload'
 import { useForm, Form, Input, Select, Edit, InputNumber } from '@pankod/refine-antd'
 import { IPet } from './interfaces'
 
-export const PostEdit: React.FC = () => {
+export const PetEdit: React.FC = () => {
   const { formProps, saveButtonProps } = useForm<IPet>()
 
   return (
@@ -44,6 +45,9 @@ export const PostEdit: React.FC = () => {
               { label: '女', value: 2 },
             ]}
           />
+        </Form.Item>
+        <Form.Item label="头像" name={'avatar'}>
+          <SingleFileUpload listType="picture" />
         </Form.Item>
       </Form>
     </Edit>

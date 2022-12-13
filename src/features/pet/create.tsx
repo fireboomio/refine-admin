@@ -1,13 +1,24 @@
+// import MultipleFileUpload from '@/components/MultipleFileUpload'
+import SingleFileUpload from '@/components/SingleFileUpload'
 import { Create, Form, Input, InputNumber, Select, useForm } from '@pankod/refine-antd'
 
 import { IPet } from './interfaces'
 
 export const PetCreate = () => {
-  const { formProps, saveButtonProps } = useForm<IPet>()
+  const { formProps, saveButtonProps, onFinish } = useForm<IPet>()
 
   return (
     <Create saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical">
+      <Form
+        {...formProps}
+        layout="vertical"
+        // onFinish={(values: any) => {
+        //   onFinish({
+        //     ...values,
+        //     pictures: values.pictures ? JSON.stringify({ pictures: values.pictures }) : null
+        //   })
+        // }}
+      >
         <Form.Item
           label="名称"
           name="name"
@@ -46,6 +57,12 @@ export const PetCreate = () => {
             ]}
           />
         </Form.Item>
+        <Form.Item label="头像" name={'avatar'}>
+          <SingleFileUpload listType="picture" />
+        </Form.Item>
+        {/* <Form.Item label="生活照" name={'pictures'}>
+          <MultipleFileUpload listType="picture-card" />
+        </Form.Item> */}
       </Form>
     </Create>
   )
