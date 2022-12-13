@@ -5,9 +5,9 @@ import '@pankod/refine-antd/dist/styles.min.css'
 // import 'antd/es/style/variable.less'
 import routerProvider from '@pankod/refine-react-router-v6'
 import AntConfigProvider from './providers/AntConfigProvider'
-import { LoginPage } from './features/auth/login'
+import { LoginPage } from './features/oidc/login'
 
-import CallbackPage from './features/auth/callback'
+import CallbackPage from './features/oidc/callback'
 import { useAuth } from './providers/AuthenticationContext'
 import { FireboomDataProvider, OperationDataProvider } from './providers/dataProvider'
 import { UserList } from './features/identity/user'
@@ -108,7 +108,7 @@ function App() {
           ...routerProvider,
           routes: [
             {
-              path: '/auth/callback',
+              path: '/oidc/callback',
               element: <CallbackPage />,
             },
           ],

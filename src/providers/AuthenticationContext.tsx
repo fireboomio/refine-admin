@@ -41,8 +41,8 @@ export function AuthenticationProvider({ children }: { children?: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   const login = useCallback(() => {
-    window.location.href = `http://localhost:9991/app/main/auth/cookie/authorize/authing?redirect_uri=${encodeURIComponent(
-      `${window.location.origin}/auth/callback`
+    window.location.href = `http://localhost:9991/auth/cookie/authorize/authing?redirect_uri=${encodeURIComponent(
+      `${window.location.origin}/oidc/callback`
     )}`
   }, [])
 
