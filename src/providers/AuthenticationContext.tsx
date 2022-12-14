@@ -65,6 +65,12 @@ export function AuthenticationProvider({ children }: { children?: ReactNode }) {
           arr.push(...role.menus)
           return arr
         }, []))
+        const res1 = await axios.post('/api/v1/role/apis', {
+          code: roles.map(role => role.code)
+        })
+        if (res.status < 300) {
+          console.log(res1.data)
+        }
         // // TODO
         // setApis(_roles.reduce<IApi[]>((arr, item) => {
         //   // @ts-ignore

@@ -9,14 +9,14 @@ interface RoleApiBindProps {
 }
 
 const RoleApiBind = ({ roleCode, onClose }: RoleApiBindProps) => {
-  const { mutate } = useCustomMutation()
+  const { mutateAsync } = useCustomMutation()
 
   const [apis, setApis] = useState<IApi[]>([])
 
   const { data, isLoading } = useList<IApi>({
     dataProviderName: 'proxy',
     resource: 'operateApi',
-    config: { hasPagination: false }
+    config: { hasPagination: false },
   })
   const [checkedApis, setCheckedApis] = useState<number[]>([])
 
@@ -24,25 +24,23 @@ const RoleApiBind = ({ roleCode, onClose }: RoleApiBindProps) => {
     setApis(data?.data ?? [])
   }, [data])
 
-  const onSave = () => {
-    mutate(
-      {
-        url: '/xxx',
+  const onSave = async () => {
+    try {
+      await mutateAsync({
+        url: '/role/bindApi',
         method: 'post',
+        dataProviderName: 'proxy',
         values: {
           roleCode,
-          apis: apis.map((item) => item.id),
+          apis: checkedApis,
         },
-      },
-      {
-        onSuccess(resp) {
-          if (resp) {
-            message.success('关联API已更新')
-            onClose?.()
-          }
-        },
-      }
-    )
+      })
+      message.success('关联API已更新')
+      onClose?.()
+    } catch (error) {
+      message.error('关联失败')
+      console.error(error)
+    }
   }
 
   const onSelect = (v: Key[]) => {
@@ -59,6 +57,22 @@ const RoleApiBind = ({ roleCode, onClose }: RoleApiBindProps) => {
     }
   }
 
+  useEffect(() => {
+    ;(async () => {
+      const resp = await mutateAsync({
+        url: '/role/apis',
+        method: 'post',
+        dataProviderName: 'proxy',
+        values: {
+          code: [roleCode],
+        },
+      })
+      if (resp) {
+        setCheckedApis((resp as any).map(item => item.id))
+      }
+    })()
+  }, [mutateAsync, roleCode])
+
   return (
     <>
       <Tree
@@ -71,7 +85,7 @@ const RoleApiBind = ({ roleCode, onClose }: RoleApiBindProps) => {
         // @ts-ignore
         titleRender={(v: IApi) => `[${v.method}] ${v.path}`}
         // @ts-ignore
-        onCheck={v => setCheckedApis(v)}
+        onCheck={(v) => setCheckedApis(v)}
       />
       <Space className="mt-4">
         <Button type="primary" loading={isLoading} onClick={onSave}>

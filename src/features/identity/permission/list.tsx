@@ -2,8 +2,6 @@ import {
   List,
   Table,
   useTable,
-  ShowButton,
-  Space,
   Icons
 } from '@pankod/refine-antd'
 
@@ -22,7 +20,7 @@ export const ApiList = () => {
           <Table.Column dataIndex="method" title="方法" />
           <Table.Column dataIndex="enable" title="状态" render={v => v ? '已上线' : '已下架'} />
           <Table.Column dataIndex="isPublic" title="是否公开" render={v => v ? '公开' : '内部'} />
-          <Table.Column dataIndex="legal" title="校验" render={v => v ? <Icons.CheckCircleFilled /> : <><Icons.WarningFilled />错误</>} />
+          <Table.Column dataIndex="legal" title="校验" render={v => !v ? <Icons.CheckCircleFilled /> : <><Icons.WarningFilled />错误</>} />
           <Table.Column dataIndex="operationType" title="类型" />
           <Table.Column dataIndex="liveQuery" title="实时" render={v => v ? '是' : '否'} />
           {/* <Table.Column<IApi>

@@ -224,7 +224,7 @@ export const FireboomDataProvider = (apiUrl: string = '/api/v1'): DataProvider =
         headers,
         params: query,
         data: payload
-      }))
+      }), 'result')
     },
   }
 }
