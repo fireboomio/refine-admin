@@ -1,15 +1,15 @@
-import { useCustom, useCustomMutation, useList } from '@pankod/refine-core'
-import { Avatar, Button, CreateButton, Drawer, Icons, message, Space, Table } from '@pankod/refine-antd'
-import { useMemo, useState } from 'react'
+import { useList } from '@pankod/refine-core'
+import { Button,Icons, Space, Table } from '@pankod/refine-antd'
+import { useState } from 'react'
 import { IApi } from '../permission/interfaces'
 
 interface ApiSelectionProps {
-  roleId: number | string
+  roleCode: string
   onClose?: () => void
   onSelect?: (users: IApi[]) => void
 }
 
-const ApiSelection = ({ roleId, onClose, onSelect }: ApiSelectionProps) => {
+const ApiSelection = ({ roleCode, onClose, onSelect }: ApiSelectionProps) => {
   const { data, isLoading } = useList<IApi>({
     dataProviderName: 'proxy',
     resource: 'operateApi',

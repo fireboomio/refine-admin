@@ -32,7 +32,7 @@ const UserRoleBind = ({ userId, onClose }: UserRoleBindProps) => {
           method: 'post',
           values: {
             userId,
-            roleId: role.id
+            roleCode: role.code
           }
         })
       }))
@@ -43,7 +43,7 @@ const UserRoleBind = ({ userId, onClose }: UserRoleBindProps) => {
           method: 'post',
           values: {
             userId,
-            roleId: sel
+            roleCode: sel
           }
         })
       }))

@@ -16,7 +16,7 @@ model User {
 
 model Role {
   id        Int @id @default(autoincrement())
-  code String
+  code String @unique
   desc String?
   User User[]
   Menu Menu[]
@@ -159,8 +159,8 @@ query GetUserRoles($userId: Int!) {
   1. 删除用户所有角色，目前只能先查然后通过循环调用
 
   ```graphql
-  mutation DisconnectOneUserRole($userId: Int!, $roleId: Int!) {
-    data: local_my_updateOneUser(where: {id: $userId}, data: {Role: {disconnect: {id: $roleId}}}) {
+  mutation DisconnectOneUserRole($userId: Int!, $roleCode: String!) {
+    data: local_my_updateOneUser(where: {id: $userId}, data: {Role: {disconnect: {code: $roleCode}}}) {
       id
     }
   }
@@ -169,8 +169,8 @@ query GetUserRoles($userId: Int!) {
   2. 批量添加用户的角色，目前只能循环调用
 
   ```graphql
-  mutation ConnectOneUserRole($userId: Int!, $roleId: Int!) {
-    data: local_my_updateOneUser(where: {id: $userId}, data: {Role: {connect: {id: $roleId}}}) {
+  mutation ConnectOneUserRole($userId: Int!, $roleCode: String!) {
+    data: local_my_updateOneUser(where: {id: $userId}, data: {Role: {connect: {code: $roleCode}}}) {
       id
     }
   }
@@ -179,8 +179,8 @@ query GetUserRoles($userId: Int!) {
 11. 查询角色的用户列表
 
 ```graphql
-query GetRoleUsers($roleId: Int!) {
-  data: local_my_findFirstRole(where: {id: {equals: $roleId}}) @transform(get: "User") {
+query GetRoleUsers($roleCode: String!) {
+  data: local_my_findFirstRole(where: {id: {equals: $roleCode}}) @transform(get: "User") {
     User {
       id
       name
@@ -197,9 +197,9 @@ query GetRoleUsers($roleId: Int!) {
 ~~12. 分页查询所有不含某角色的用户列表
 
 ```graphql
-query GetUsersWithoutRole($roleId: Int!, $take: Int = 10, $skip: Int = 0) {
+query GetUsersWithoutRole($roleCode: String!, $take: Int = 10, $skip: Int = 0) {
   data: local_my_findManyUser(
-    where: {Role: {every: {NOT: {id: {equals: $roleId}}}}}
+    where: {Role: {every: {NOT: {code: {equals: $roleCode}}}}}
     skip: $skip
     take: $take
   ) {
@@ -212,7 +212,7 @@ query GetUsersWithoutRole($roleId: Int!, $take: Int = 10, $skip: Int = 0) {
     providerUserId
   }
   total: local_my_aggregateUser(
-    where: {Role: {every: {NOT: {id: {equals: $roleId}}}}}
+    where: {Role: {every: {NOT: {code: {equals: $roleCode}}}}}
   ) @transform(get: "_count.id") {
     _count {
       id
@@ -224,8 +224,8 @@ query GetUsersWithoutRole($roleId: Int!, $take: Int = 10, $skip: Int = 0) {
 12. 查询角色所拥有的菜单
 
 ```graphql
-query GetRoleMenus($roleId: Int!) {
-  data: local_my_findFirstRole(where: {id: {equals: $roleId}}) @transform(get: "Menu") {
+query GetRoleMenus($roleCode: String!) {
+  data: local_my_findFirstRole(where: {code: {equals: $roleCode}}) @transform(get: "Menu") {
     Menu {
       sort
       path
@@ -242,8 +242,8 @@ query GetRoleMenus($roleId: Int!) {
 13. 给角色关联菜单
   1. 删除角色的所有菜单，目前只能循环删除
   ```graphql
-  mutation DisconnectOneRoleMenu($roleId: Int!, $menuId: Int!) {
-    data: local_my_updateOneRole(where: {id: $roleId}, data: {Menu: {disconnect: {id: $menuId}}}) {
+  mutation DisconnectOneRoleMenu($roleCode: String!, $menuId: Int!) {
+    data: local_my_updateOneRole(where: {id: $roleCode}, data: {Menu: {disconnect: {id: $menuId}}}) {
       id
     }
   }
@@ -252,8 +252,8 @@ query GetRoleMenus($roleId: Int!) {
   2. 批量添加角色的菜单
 
   ```graphql
-  mutation ConnectOneRoleMenu($roleId: Int!, $menuId: Int!) {
-    data: local_my_updateOneRole(data: {Menu: {connect: {id: $menuId}}}, where: {id: $roleId}) {
+  mutation ConnectOneRoleMenu($roleCode: String!, $menuId: Int!) {
+    data: local_my_updateOneRole(data: {Menu: {connect: {id: $menuId}}}, where: {code: $roleCode}) {
       id
     }
   }

@@ -5,18 +5,18 @@ import { arrayToTree } from '@/utils/array'
 import { IMenu } from '../menu/interfaces'
 
 interface RoleMenuBindProps {
-  roleId: number | string
+  roleCode: string
   onClose?: () => void
 }
 
-const RoleMenuBind = ({ roleId, onClose }: RoleMenuBindProps) => {
+const RoleMenuBind = ({ roleCode, onClose }: RoleMenuBindProps) => {
   const { data } = useList<IMenu>({ config: { hasPagination: false }, resource: 'Menu'})
   const { mutateAsync, isLoading } = useCustomMutation()
 
   const { data: roleMenus } = useCustom<IMenu[]>({
     url: 'GetRoleMenus',
     method: 'get',
-    config: { query: { roleId }}
+    config: { query: { roleCode }}
   })
   
   const menusMap = useMemo(() => {
@@ -44,7 +44,7 @@ const RoleMenuBind = ({ roleId, onClose }: RoleMenuBindProps) => {
           method: 'post',
           values: {
             menuId: menu.id,
-            roleId
+            roleCode
           }
         })
       }))
@@ -55,7 +55,7 @@ const RoleMenuBind = ({ roleId, onClose }: RoleMenuBindProps) => {
           method: 'post',
           values: {
             menuId: sel,
-            roleId
+            roleCode
           }
         })
       }))
@@ -65,7 +65,7 @@ const RoleMenuBind = ({ roleId, onClose }: RoleMenuBindProps) => {
       console.error(error)
       message.error('更新失败')
     }
-  }, [checkedMenus, mutateAsync, onClose, roleId, roleMenus])
+  }, [checkedMenus, mutateAsync, onClose, roleCode, roleMenus])
 
   const onCheck = useCallback(({ checked, halfChecked }: {
     checked: number[];

@@ -1,14 +1,14 @@
-import { Avatar, Button, CreateButton, Drawer, message, Space, Table, useTable } from '@pankod/refine-antd'
-import { useMemo, useState } from 'react'
+import { Avatar, Button, Space, Table, useTable } from '@pankod/refine-antd'
+import { useState } from 'react'
 import { IUser } from '../user/interfaces'
 
 interface UserSelectionProps {
-  roleId: number | string
+  roleCode: number | string
   onClose?: () => void
   onSelect?: (users: IUser[]) => void
 }
 
-const UserSelection = ({ roleId, onClose, onSelect }: UserSelectionProps) => {
+const UserSelection = ({ roleCode, onClose, onSelect }: UserSelectionProps) => {
   
   const { tableProps } = useTable<IUser, any, any>({ resource: 'User' })
   const [selections, setSelections] = useState<IUser[]>([])

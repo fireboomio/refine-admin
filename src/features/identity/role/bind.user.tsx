@@ -5,17 +5,17 @@ import { IUser } from '../user/interfaces'
 import UserSelection from './user.selection'
 
 interface RoleUserBindProps {
-  roleId: number | string
+  roleCode: string
   onClose?: () => void
 }
 
-const RoleUserBind = ({ roleId, onClose }: RoleUserBindProps) => {
+const RoleUserBind = ({ roleCode, onClose }: RoleUserBindProps) => {
   const [users, setUsers] = useState<IUser[]>([])
 
   const { data, isLoading } = useCustom<IUser[]>({
     url: 'GetRoleUsers',
     method: 'get',
-    config: { query: { roleId }}
+    config: { query: { roleCode }}
   })
   const [drawerVisible, setDrawerVisible] = useState(false)
   const { mutateAsync } = useCustomMutation()
@@ -32,7 +32,7 @@ const RoleUserBind = ({ roleId, onClose }: RoleUserBindProps) => {
           method: 'post',
           values: {
             userId: user.id,
-            roleId
+            roleCode
           }
         })
       }))
@@ -43,7 +43,7 @@ const RoleUserBind = ({ roleId, onClose }: RoleUserBindProps) => {
           method: 'post',
           values: {
             userId: sel.id,
-            roleId
+            roleCode
           }
         })
       }))
@@ -80,7 +80,7 @@ const RoleUserBind = ({ roleId, onClose }: RoleUserBindProps) => {
         <Button onClick={onClose}>取消</Button>
       </Space>
       <Drawer title="选择用户" visible={drawerVisible} onClose={closeDrawer} width={520}>
-        {drawerVisible && <UserSelection roleId={roleId} onClose={closeDrawer} onSelect={v => {
+        {drawerVisible && <UserSelection roleCode={roleCode} onClose={closeDrawer} onSelect={v => {
           setUsers([...users, ...v.filter(u => !users.find(u1 => u1.id === u.id))])
         }} />}
       </Drawer>

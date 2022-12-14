@@ -57,13 +57,13 @@ export const RoleList = () => {
         </Table>
       </List>
       <Drawer title={`${userBindingRole?.code} - 绑定用户`} visible={!!userBindingRole} onClose={onCloseUserBindingDrawer} width={520}>
-        {userBindingRole && <RoleUserBind roleId={userBindingRole?.id} onClose={onCloseUserBindingDrawer} />}
+        {userBindingRole && <RoleUserBind roleCode={userBindingRole?.code} onClose={onCloseUserBindingDrawer} />}
       </Drawer>
       <Drawer title={`${apiBindingRole?.code} - 绑定API`} visible={!!apiBindingRole} onClose={onCloseApiBindingDrawer} width={520}>
-        {apiBindingRole && <RoleApiBind roleId={apiBindingRole?.id} onClose={onCloseApiBindingDrawer} />}
+        {apiBindingRole && <RoleApiBind roleCode={apiBindingRole?.code} onClose={onCloseApiBindingDrawer} />}
       </Drawer>
       <Drawer title={`${menuBindingRole?.code} - 绑定菜单`} visible={!!menuBindingRole} onClose={onCloseMenuBindingDrawer} width={520}>
-        {menuBindingRole && <RoleMenuBind roleId={menuBindingRole?.id} onClose={onCloseMenuBindingDrawer} />}
+        {menuBindingRole && <RoleMenuBind roleCode={menuBindingRole?.code} onClose={onCloseMenuBindingDrawer} />}
       </Drawer>
     </>
   )

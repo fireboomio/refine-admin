@@ -4,11 +4,11 @@ import { Key, useEffect, useState } from 'react'
 import { IApi } from '../permission/interfaces'
 
 interface RoleApiBindProps {
-  roleId: number | string
+  roleCode: number | string
   onClose?: () => void
 }
 
-const RoleApiBind = ({ roleId, onClose }: RoleApiBindProps) => {
+const RoleApiBind = ({ roleCode, onClose }: RoleApiBindProps) => {
   const { mutate } = useCustomMutation()
 
   const [apis, setApis] = useState<IApi[]>([])
@@ -30,7 +30,7 @@ const RoleApiBind = ({ roleId, onClose }: RoleApiBindProps) => {
         url: '/xxx',
         method: 'post',
         values: {
-          roleId,
+          roleCode,
           apis: apis.map((item) => item.id),
         },
       },
