@@ -78,23 +78,30 @@ function App() {
         catchAll={<ErrorComponent />}
         authProvider={{
           login: () => {
+            console.log('auth login')
             return Promise.resolve()
           },
           logout: () => {
+            console.log('auth logout')
             return logout()
           },
           checkAuth: () => {
+            console.log('auth isAuthenticated', isAuthenticated)
             return isAuthenticated ? Promise.resolve() : Promise.reject()
           },
           checkError: (error) => {
-            console.log('checkError', error)
+            console.log('auth checkError', error)
             if (error.status === 401) {
               return Promise.reject('/login')
             }
             return Promise.resolve()
           },
-          getPermissions: () => Promise.resolve(),
+          getPermissions: () => {
+            console.log('auth getPermissions')
+            return Promise.resolve()
+          },
           getUserIdentity() {
+            console.log('auth getUserIdentity')
             if (user) {
               return Promise.resolve({
                 ...user,

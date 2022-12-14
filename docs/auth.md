@@ -269,9 +269,9 @@ query GetRoleMenus($roleId: Int!) {
   1. 查询用户是否存在
 
   ```graphql
-  query GetOneUser($provider: String!, $providerId: String!, $providerUserId: String!) {
+  query GetOneUser($providerId: String!, $providerUserId: String!) {
     data: local_my_findFirstUser(
-      where: { AND: { provider: {equals: $provider}, providerId: {equals: $providerId}, providerUserId: {equals: $providerUserId}}}
+      where: { providerId: {equals: $providerId}, providerUserId: {equals: $providerUserId }}
     ) {
       name
       id
@@ -292,18 +292,68 @@ query GetRoleMenus($roleId: Int!) {
   3. 如果用户存在，则获取用户角色、菜单
 
   ```graphql
-  query GetUserRoleMenu($userId: Int!, $roleId: Int! @internal) {
-    data: local_my_findFirstUserOnRole(where: {userId: {equals: $userId}}) {
-      roleId @export(as: "roleId")
-      menus: _join @transform(get: "local_my_findManyMenuOnRole.data") {
-        local_my_findManyMenuOnRole(where: {roleId: {equals: $roleId}}) {
-          data: Menu {
-            id
-            label
-            level
-            parentId
-            path
-            sort
+  query GetUserRoleMenu($providerId: String!, $providerUserId: String!) {
+    data: local_my_findFirstUser(
+      where: { providerId: {equals: $providerId}, providerUserId: {equals: $providerUserId }}
+    ) {
+      roles: Role {
+        id
+        desc
+        code
+        menus: Menu {
+          icon
+          id
+          label
+          level
+          parentId
+          path
+          sort
+        }
+      }
+      avatarUrl
+      id
+      name
+    }
+  }
+  ```
+  对应的 `postAuthentication.ts` 钩子内容如下
+
+  ```ts
+  import { Client } from '../generated/fireboom.client'
+  import { AuthenticationHookRequest } from '../generated/fireboom.hooks'
+
+  export default async function postAuthentication(hook: AuthenticationHookRequest) : Promise<void>{
+    if (hook.user) {
+      const client = new Client({})
+      const { avatarUrl, email, name, nickName, provider, providerId, userId } = hook.user
+      const resp = await client.query.GetOneUser({
+        input: {
+          // provider: provider!,
+          providerId: providerId!,
+          providerUserId: userId!
+        }
+      })
+      if (resp.status === 'ok') {
+        if (!resp.body.errors) {
+          const existedUser = resp.body.data!.data
+          if (!existedUser) {
+            const _name = nickName || name || email!
+            const rest = await client.mutation.CreateOneUser({
+              input: {
+                data: {
+                  name: _name,
+                  provider: provider!,
+                  providerId: providerId!,
+                  providerUserId: userId!,
+                  avatarUrl: avatarUrl
+                }
+              }
+            })
+            if (rest.status === 'ok') {
+              if (!rest.body.errors) {
+                console.info(`Success sync user: ${providerId} - ${_name}`)
+              }
+            }
           }
         }
       }

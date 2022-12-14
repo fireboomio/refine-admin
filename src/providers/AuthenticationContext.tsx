@@ -2,8 +2,8 @@ import axios from 'axios'
 import { IMenu } from '../features/identity/menu/interfaces'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { IApi } from '../features/identity/permission/interfaces'
-import { IRole, IRoleWithApi } from '../features/identity/role/interfaces'
-import { mockMyMenus, mockMyRoles } from '../features/identity/mock'
+import { IRole } from '../features/identity/role/interfaces'
+import { emtpyMenu } from '@/features/empty'
 
 export type UserInfo = {
   name?: string
@@ -47,49 +47,56 @@ export function AuthenticationProvider({ children }: { children?: ReactNode }) {
   }, [])
 
   const logout = useCallback(() => {
-    return axios.get('/app/main/auth/cookie/user/logout').then(() => {
+    return axios.get('/auth/cookie/user/logout').then(() => {
       window.location.href = '/login'
     })
   }, [])
 
-  const fetchUserPermissions = useCallback(async () => {
-    const _roles: IRoleWithApi[] = await new Promise(resolve => {
-      setTimeout(() => resolve(mockMyRoles), 500)
-    })
-    // TODO
-    const _menus: IMenu[] = mockMyMenus
-    setRoles(_roles)
-    // TODO
-    setApis(_roles.reduce<IApi[]>((arr, item) => {
-      // @ts-ignore
-      arr.push(...item.apis)
-      return arr
-    }, []))
-    setMenus(_menus)
+  const fetchUserPermissions = useCallback(async (user?: UserInfo) => {
+    if (user) {
+      const res = await axios.get('/operations/GetUserRoleMenu', {
+        params: { providerId: user.providerId, providerUserId: user.userId }
+      })
+      if (res.status < 300) {
+        console.log(res.data.data)
+        const { roles } = res.data.data.data
+        setRoles(roles)
+        setMenus(roles.reduce((arr, role) => {
+          arr.push(...role.menus)
+          return arr
+        }, []))
+        // // TODO
+        // setApis(_roles.reduce<IApi[]>((arr, item) => {
+        //   // @ts-ignore
+        //   arr.push(...item.apis)
+        //   return arr
+        // }, []))
+      }
+    }
   }, [])
 
   const checkAuthentication = useCallback(() => {
     setIsLoading(true)
     return axios
-      .get('/app/main/auth/cookie/user', {
+      .get('/auth/cookie/user', {
         withCredentials: true,
       })
       .then((data) => {
         if (data.status < 300 && data.status >= 200) {
           setUser(data.data as UserInfo)
-          // return fetchUserPermissions().then(() => true)
-          return true
+          return data.data as UserInfo
         }
       })
       .catch(() => {})
       .then((ret) => {
         setIsLoading(false)
-        return fetchUserPermissions().then(() => ret ?? false)
+        setMenus([emtpyMenu])
+        return fetchUserPermissions(ret ?? undefined).then(() => ret ? true : false)
+        // return false
       })
   }, [])
 
   useEffect(() => {
-    console.log('checkAuthentication')
     checkAuthentication()
   }, [])
 

@@ -25,6 +25,10 @@ export default defineConfig({
       '^/oauth2': {
         target: `http://${serverHost}:3846`,
         changeOrigin: true
+      },
+      '^/operations': {
+        target: `http://${serverHost}:9991`,
+        changeOrigin: true
       }
     }
   },
