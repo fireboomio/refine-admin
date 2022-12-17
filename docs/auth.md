@@ -180,7 +180,7 @@ query GetUserRoles($userId: Int!) {
 
 ```graphql
 query GetRoleUsers($roleCode: String!) {
-  data: local_my_findFirstRole(where: {id: {equals: $roleCode}}) @transform(get: "User") {
+  data: local_my_findFirstRole(where: {code: {equals: $roleCode}}) @transform(get: "User") {
     User {
       id
       name
@@ -243,7 +243,7 @@ query GetRoleMenus($roleCode: String!) {
   1. 删除角色的所有菜单，目前只能循环删除
   ```graphql
   mutation DisconnectOneRoleMenu($roleCode: String!, $menuId: Int!) {
-    data: local_my_updateOneRole(where: {id: $roleCode}, data: {Menu: {disconnect: {id: $menuId}}}) {
+    data: local_my_updateOneRole(where: {code: $roleCode}, data: {Menu: {disconnect: {id: $menuId}}}) {
       id
     }
   }
