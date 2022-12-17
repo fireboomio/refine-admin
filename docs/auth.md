@@ -320,7 +320,7 @@ query GetRoleMenus($roleCode: String!) {
 
   ```ts
   import { Client } from '../generated/fireboom.client'
-  import { AuthenticationHookRequest } from '../generated/fireboom.hooks'
+  import { AuthenticationHookRequest } from 'fireboom-wundersdk'
 
   export default async function postAuthentication(hook: AuthenticationHookRequest) : Promise<void>{
     if (hook.user) {
