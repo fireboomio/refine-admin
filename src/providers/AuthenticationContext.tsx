@@ -58,25 +58,26 @@ export function AuthenticationProvider({ children }: { children?: ReactNode }) {
         params: { providerId: user.providerId, providerUserId: user.userId }
       })
       if (res.status < 300) {
-        console.log(res.data.data)
-        const { roles } = res.data.data.data
-        setRoles(roles)
-        setMenus(roles.reduce((arr, role) => {
-          arr.push(...role.menus)
-          return arr
-        }, []))
-        const res1 = await axios.post('/api/v1/role/apis', {
-          code: roles.map(role => role.code)
-        })
-        if (res.status < 300) {
-          console.log(res1.data)
+        const data = res.data.data.data
+        if (data) {
+          setRoles(roles)
+          setMenus(roles.reduce((arr, role) => {
+            arr.push(...role.menus)
+            return arr
+          }, []))
+          const res1 = await axios.post('/api/v1/role/apis', {
+            code: roles.map(role => role.code)
+          })
+          if (res.status < 300) {
+            console.log(res1.data)
+          }
+          // // TODO
+          // setApis(_roles.reduce<IApi[]>((arr, item) => {
+          //   // @ts-ignore
+          //   arr.push(...item.apis)
+          //   return arr
+          // }, []))
         }
-        // // TODO
-        // setApis(_roles.reduce<IApi[]>((arr, item) => {
-        //   // @ts-ignore
-        //   arr.push(...item.apis)
-        //   return arr
-        // }, []))
       }
     }
   }, [])
