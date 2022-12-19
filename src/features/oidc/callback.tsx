@@ -8,8 +8,12 @@ const AuthCallbackPage = () => {
   const { checkAuthentication } = useAuth()
 
   useEffect(() => {
-    checkAuthentication().then(() => {
-      replace('/')
+    checkAuthentication().then((success) => {
+      if (success) {
+        replace('/')
+      } else {
+        replace('/500')
+      }
     })
   }, [])
 

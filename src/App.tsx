@@ -1,5 +1,5 @@
 import { Refine, ResourceProps } from '@pankod/refine-core'
-import { notificationProvider, Layout, ReadyPage, ErrorComponent } from '@pankod/refine-antd'
+import { notificationProvider, Layout, ReadyPage, ErrorComponent, Result } from '@pankod/refine-antd'
 
 import '@pankod/refine-antd/dist/styles.min.css'
 // import 'antd/es/style/variable.less'
@@ -18,23 +18,23 @@ import { PetCreate, PetEdit, PetList, PetShow } from './features/pet'
 
 const allResources = {
   User: {
-    list: UserList
+    list: UserList,
   },
   Role: {
-    list: RoleList
+    list: RoleList,
   },
   Menu: {
-    list: MenuList
+    list: MenuList,
   },
   Api: {
-    list: ApiList
+    list: ApiList,
   },
   Pet: {
     list: PetList,
     create: PetCreate,
     edit: PetEdit,
-    show: PetShow
-  }
+    show: PetShow,
+  },
 }
 
 function App() {
@@ -54,7 +54,7 @@ function App() {
       name: menu.path,
       options: {
         label: menu.label,
-      }
+      },
     }
     if (menu.parentId) {
       res.parentName = routeMap[menu.parentId]
@@ -118,11 +118,15 @@ function App() {
               path: '/oidc/callback',
               element: <CallbackPage />,
             },
+            {
+              path: '/500',
+              element: <Result status="500" title="500" subTitle="Sorry, something went wrong." />,
+            },
           ],
         }}
         dataProvider={{
           default: OperationDataProvider(),
-          proxy: FireboomDataProvider()
+          proxy: FireboomDataProvider(),
         }}
         resources={resources}
       />

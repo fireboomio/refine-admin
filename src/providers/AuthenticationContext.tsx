@@ -98,7 +98,7 @@ export function AuthenticationProvider({ children }: { children?: ReactNode }) {
       .then((ret) => {
         setIsLoading(false)
         setMenus([emtpyMenu])
-        return fetchUserPermissions(ret ?? undefined).then(() => ret ? true : false)
+        return fetchUserPermissions(ret ?? undefined).then(() => ret ? true : false).catch(() => false)
         // return false
       })
   }, [])
